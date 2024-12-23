@@ -18,6 +18,10 @@ class ExpressServer {
     serverRouter(this.expressApplication);
   }
 
+  /**
+   *  This Class Method is use to connect to the MongoDB
+   * @returns {Promise<void>}
+   */
   private async connectNosql() {
     const mongoUrl = this.envHelper?.getEnvValue('MONGO_URL');
     return new Promise((resolve, reject) => {
