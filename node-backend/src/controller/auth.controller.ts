@@ -1,5 +1,9 @@
 import type, { NextFunction, Request, Response } from 'express';
-import { loginSchema, registerSchema } from '../validation/auth.validator';
+import {
+  forgetBodySchema,
+  loginSchema,
+  registerSchema,
+} from '../validation/auth.validator';
 import { ILoginBody, IRegisterBody } from '../interfaces/auth.interface';
 import { ValidationException } from '../utility/exceptionUtility';
 import httpStatusCode from 'http-status-codes';
@@ -82,6 +86,37 @@ class AuthController {
       const validPayload = JSON.parse(JSON.stringify(value as ILoginBody));
       const response = await this.AuthService.loginService(validPayload);
       return genericSuccessResponse(res, response, 'Login SuccesssFully', 201);
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  public forgetPassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { error, value } = forgetBodySchema.validate(
+      req.body as { email: string }
+    );
+
+    if (error) {
+      return genericErrorResponse(
+        res,
+        error.details,
+        'Validation Error',
+        httpStatusCode.BAD_REQUEST
+      );
+    }
+
+    try {
+      const response = await this.AuthService.forgetService(value);
+      return genericSuccessResponse(
+        res,
+        response,
+        'Passoword Reset Link Forwarded',
+        201
+      );
     } catch (err) {
       next(err);
     }

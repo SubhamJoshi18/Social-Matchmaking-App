@@ -12,4 +12,8 @@ const loginSchema = joi.object({
   password: joi.string().min(8).required(),
 });
 
-export { registerSchema, loginSchema };
+const forgetBodySchema = joi.object({
+  email: joi.string().email().required(),
+});
+
+export { registerSchema, loginSchema, forgetBodySchema };

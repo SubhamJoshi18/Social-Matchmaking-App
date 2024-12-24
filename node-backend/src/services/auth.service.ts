@@ -1,4 +1,3 @@
-import User from '../database/mongodb/models/user.schema';
 import {
   ILoginBody,
   IPayloadBody,
@@ -8,20 +7,25 @@ import UserRepo from '../repository/user.repo';
 import { DatabaseException } from '../utility/exceptionUtility';
 import httpStatus from 'http-status-codes';
 import BcryptHelper from '../helpers/bcryptHelper';
-import { valid } from 'joi';
 import { appLogger } from '../libs/logger';
-import { userInfo } from 'os';
 import JwtHelper from '../helpers/jwtHelper';
+import UuidTokenRepo from '../repository/uuidToken.repo';
+import { createRandomizeUuid } from '../utility/uuidUtility';
+import EmailHelper from '../helpers/smtpHelper';
 
 class AuthService {
   private UserRepo: UserRepo;
+  private UuidTokenRepo: UuidTokenRepo;
   private bcryptHelper: BcryptHelper;
   private jwtHelepr: JwtHelper;
+  private smtpHelper: EmailHelper;
 
   constructor() {
     this.UserRepo = new UserRepo();
     this.bcryptHelper = new BcryptHelper();
     this.jwtHelepr = new JwtHelper();
+    this.UuidTokenRepo = new UuidTokenRepo();
+    this.smtpHelper = new EmailHelper();
   }
   /**
    *
@@ -109,6 +113,45 @@ class AuthService {
     };
   }
 
+  public async forgetService(email: string) {
+
+    const isValidEmail = await this.UserRepo.checkEmailExists(email);
+    if (!isValidEmail) {
+      throw new DatabaseException(
+        httpStatus.NOT_FOUND,
+        `${email} not found in the system. Please provide a valid email.`
+      );
+    }
+
+
+    const userDocument = await this.UserRepo.getUserInfo(email);
+    if (!userDocument) {
+      throw new DatabaseException(
+        httpStatus.BAD_REQUEST,
+        'User not found in the system.'
+      );
+    }
+    const randomUuid = createRandomizeUuid();
+    const insertResult = await this.UuidTokenRepo.uuidToken(
+      userDocument.email,
+      randomUuid
+    );
+
+    const resetUrl = `http://localhost:3000/api/reset-password/${insertResult.uuid_token}`;
+    const subject = 'Password Reset Request';
+    const text = `Click the following link to reset your password: ${resetUrl}`;
+
+    try {
+      await this.smtpHelper.sendEmail(userDocument.email, subject, text);
+      return 'Password reset email sent successfully.';
+    } catch (error) {
+      throw new DatabaseException(
+        httpStatus.INTERNAL_SERVER_ERROR,
+        'Error sending password reset email. Please try again later.'
+      );
+    }
+  }
+
   private handleUserCredentials(
     isUsernameExists: boolean,
     isEmalExists: boolean
@@ -124,7 +167,7 @@ class AuthService {
         };
   }
 
-  public createAccessTokenAndRefreshToken = async (
+  private createAccessTokenAndRefreshToken = async (
     userPayload: IPayloadBody
   ) => {
     const accessToken = await this.jwtHelepr.createAccessToken(userPayload);
