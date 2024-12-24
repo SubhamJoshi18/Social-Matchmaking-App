@@ -6,12 +6,17 @@ interface IRegisterBody {
   username: string;
 }
 
-interface IPayloadBody {
-  _id: ObjectId | string;
-  email: string;
-  username: string;
-  role: string;
-  isActive: string;
+interface ILoginBody {
+  password: string;
+  username?: string;
 }
 
-export { IRegisterBody, IPayloadBody };
+interface IPayloadBody {
+  _id: ObjectId | string | any;
+  email: string;
+  username: string;
+  role: string[];
+  isActive: boolean;
+}
+
+export { IRegisterBody, IPayloadBody, ILoginBody };

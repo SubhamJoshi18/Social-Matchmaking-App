@@ -6,7 +6,7 @@ import EnvHelper from './envHelper';
  * A helper class for managing JWT token generation and validation.
  */
 class JwtHelper {
-  private envHelper: EnvHelper | null = null;
+  private envHelper: EnvHelper;
 
   constructor() {
     this.envHelper = new EnvHelper();
@@ -17,9 +17,9 @@ class JwtHelper {
    * @param {IPayloadBody} payloadDetails - The payload details to include in the token.
    * @returns {Promise<string>} - A promise that resolves to the generated access token.
    */
-  public async createAccessToken(
+  public createAccessToken = async (
     payloadDetails: IPayloadBody
-  ): Promise<string> {
+  ): Promise<string> => {
     const options: jwt.SignOptions = {
       issuer: 'Shubham',
       expiresIn: '1h',
@@ -29,41 +29,36 @@ class JwtHelper {
 
     const userPayload = JSON.parse(JSON.stringify(payloadDetails));
 
+    console.log(userPayload);
+
     return new Promise((resolve, reject) => {
-      if (options && secretKey && userPayload) {
-        jwt.sign(userPayload, secretKey, options, (err, token) => {
-          if (err || !token) {
-            return reject(
-              new JsonWebTokenError('Token Credential Does Not Match')
-            );
-          }
+      jwt.sign(userPayload, secretKey, options, (err, token) => {
+        if (err) {
+          return reject(
+            new JsonWebTokenError('Token Credential Does Not Match')
+          );
+        }
+        if (token) {
           resolve(token);
-        });
-      } else {
-        reject(
-          new JsonWebTokenError(
-            'Missing required parameters for token generation'
-          )
-        );
-      }
+        }
+      });
     });
-  }
+  };
 
   /**
    * Creates a refresh token with a given payload.
    * @param {IPayloadBody} payloadDetails - The payload details to include in the token.
    * @returns {Promise<string>} - A promise that resolves to the generated refresh token.
    */
-  public async createRefreshToken(
+  public createRefreshToken = async (
     payloadDetails: IPayloadBody
-  ): Promise<string> {
+  ): Promise<string> => {
     const options: jwt.SignOptions = {
       issuer: 'Shubham',
       expiresIn: '7d', // Refresh tokens typically have a longer expiration period
     };
     const secretKey =
-      this.envHelper?.getEnvValue('REFRESH_SECRET_KEY') ??
-      'random_refresh_secret';
+      this.envHelper?.getEnvValue('SECRET_KEY') ?? 'random_refresh_secret';
 
     const userPayload = JSON.parse(JSON.stringify(payloadDetails));
 
@@ -85,7 +80,7 @@ class JwtHelper {
         );
       }
     });
-  }
+  };
 }
 
 export default JwtHelper;

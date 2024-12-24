@@ -13,7 +13,9 @@ class UserRepo {
       username: username,
     });
 
-    return Object.entries(result as object).length > 0;
+    return result === null
+      ? false
+      : Object.entries(result as object).length > 0;
   }
 
   /**
@@ -26,7 +28,9 @@ class UserRepo {
       email: email,
     });
 
-    return Object.entries(email).length > 0;
+    return result === null
+      ? false
+      : Object.entries(result as object).length > 0;
   }
 
   /**
@@ -44,7 +48,16 @@ class UserRepo {
       password: password,
       username: username,
     });
+
     return data;
+  }
+
+  public async getUserInfo(username: string) {
+    const document = await User.findOne({
+      username: username,
+    });
+   
+    return document;
   }
 }
 
