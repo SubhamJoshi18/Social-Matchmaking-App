@@ -4,6 +4,7 @@ import serverMiddleware from './middleware/server.middleware';
 import { serverRouter } from './routers/server.router';
 import EnvHelper from './helpers/envHelper';
 import connectMongoDB from './database/mongodb/connect';
+import { isDockerEnabled } from './constants/flagConstant';
 
 class ExpressServer {
   public expressApplication: Application | null = null;
@@ -23,7 +24,14 @@ class ExpressServer {
    * @returns {Promise<void>}
    */
   private async connectNosql() {
-    const mongoUrl = this.envHelper?.getEnvValue('MONGO_URL');
+    let mongoUrl = '';
+
+    if (isDockerEnabled) {
+      mongoUrl = this.envHelper?.getEnvValue('DOCKER_MONGO_URL') as string;
+    } else {
+      mongoUrl = this.envHelper?.getEnvValue('MONGO_URL') as string;
+    }
+
     return new Promise((resolve, reject) => {
       connectMongoDB(mongoUrl as string)
         .then(resolve)

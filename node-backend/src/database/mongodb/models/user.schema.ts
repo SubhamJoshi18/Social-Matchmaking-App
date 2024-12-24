@@ -1,3 +1,4 @@
+import { required } from 'joi';
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
@@ -14,6 +15,13 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6,
   },
+
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+
   isActive: {
     type: Boolean,
     default: true,
