@@ -10,6 +10,11 @@ const port = envHelper.getEnvValue('PORT');
 
 const server = new ExpressServer(app, convertIntoNumber(port));
 
+
+/**
+ * This Function is use to start the Express server
+ * @returns {Promise<void>}
+ */
 const startExpressServer = async () => {
   let retryCount = 5;
   const retryDelay = 2000;
