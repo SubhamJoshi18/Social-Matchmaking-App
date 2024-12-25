@@ -4,6 +4,7 @@ import {
   checkRoleExists,
   isUser,
 } from '../middleware/authMiddleware/roles.middleware';
+import { isUserActivated } from '../middleware/authMiddleware/checkActive.middleware';
 
 const userProfileRouter: Router = Router();
 
@@ -12,6 +13,7 @@ userProfileRouter.get(
   verifyAuthTokenMiddleware,
   checkRoleExists,
   isUser,
+  isUserActivated,
   (req: Request, res: Response): void => {
     console.log(req.user);
     res.status(201).json({
