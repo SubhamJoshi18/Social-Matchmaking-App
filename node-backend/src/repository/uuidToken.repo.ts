@@ -20,6 +20,13 @@ class UuidTokenRepo {
     return newResult;
   }
 
+  public async retriveToken(uuidToken: string) {
+    const token = await UuuidToken.findOne({
+      uuid_token: uuidToken as string,
+    });
+    return token;
+  }
+
   public async checkDuplicationUuidToken(uuidToken: string) {
     const isToken = await UuuidToken.findOne({
       uuid_token: uuidToken,

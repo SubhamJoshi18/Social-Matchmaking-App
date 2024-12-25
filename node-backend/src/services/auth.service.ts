@@ -2,9 +2,13 @@ import {
   ILoginBody,
   IPayloadBody,
   IRegisterBody,
+  IResetPassword,
 } from '../interfaces/auth.interface';
 import UserRepo from '../repository/user.repo';
-import { DatabaseException } from '../utility/exceptionUtility';
+import {
+  BadRequestException,
+  DatabaseException,
+} from '../utility/exceptionUtility';
 import httpStatus from 'http-status-codes';
 import BcryptHelper from '../helpers/bcryptHelper';
 import { appLogger } from '../libs/logger';
@@ -114,7 +118,6 @@ class AuthService {
   }
 
   public async forgetService(email: string) {
-
     const isValidEmail = await this.UserRepo.checkEmailExists(email);
     if (!isValidEmail) {
       throw new DatabaseException(
@@ -123,7 +126,6 @@ class AuthService {
       );
     }
 
-
     const userDocument = await this.UserRepo.getUserInfo(email);
     if (!userDocument) {
       throw new DatabaseException(
@@ -131,13 +133,15 @@ class AuthService {
         'User not found in the system.'
       );
     }
+
+    const userId = userDocument._id;
     const randomUuid = createRandomizeUuid();
     const insertResult = await this.UuidTokenRepo.uuidToken(
       userDocument.email,
       randomUuid
     );
 
-    const resetUrl = `http://localhost:3000/api/reset-password/${insertResult.uuid_token}`;
+    const resetUrl = `http://localhost:3000/api/reset-password/${insertResult.uuid_token}/${userId}`;
     const subject = 'Password Reset Request';
     const text = `Click the following link to reset your password: ${resetUrl}`;
 
@@ -151,6 +155,78 @@ class AuthService {
       );
     }
   }
+
+  public async checkPasswordLinkService(uuidToken: string) {
+    let isTokenValid = true;
+
+    if (typeof uuidToken !== 'string') {
+      return new BadRequestException(
+        httpStatus.BAD_REQUEST,
+        'The Provided Path Parameter is not a string'
+      );
+    }
+
+    const isDuplicatedToken =
+      await this.UuidTokenRepo.checkDuplicationUuidToken(uuidToken);
+
+    if (!isDuplicatedToken) {
+      const tokenData = await this.UuidTokenRepo.retriveToken(
+        uuidToken as string
+      );
+
+      if (!tokenData) {
+        throw new DatabaseException(
+          httpStatus.BAD_GATEWAY,
+          'The Uuid Token is invalid , Please try again'
+        );
+      }
+
+      return tokenData !== null ? isTokenValid : !isTokenValid;
+    }
+  }
+
+  public resetPasswordService = async (
+    validPassword: IResetPassword,
+    id: string
+  ) => {
+    const { password } = validPassword;
+
+    const hashNewPassword = await this.bcryptHelper.hashPassword(password);
+
+    const userDoc = await this.UserRepo.getUserId(id as string);
+
+    if (!userDoc) {
+      throw new DatabaseException(
+        httpStatus.CONFLICT,
+        `User Document Does not Exists on the System`
+      );
+    }
+
+    const userOldPassword = userDoc.password;
+    const checkOldPasswordMatch = await this.bcryptHelper.compareHash(
+      password,
+      userOldPassword
+    );
+
+    if (checkOldPasswordMatch) {
+      throw new DatabaseException(
+        httpStatus.BAD_REQUEST,
+        'You have Entered Your Old Password , Please Enter a new one'
+      );
+    }
+
+    const updatPayload = {
+      password: hashNewPassword,
+    };
+
+    const updateResult = await this.UserRepo.updateUserInfo(
+      id as string,
+      updatPayload
+    );
+    if (updateResult.modifiedCount > 0 && updateResult.acknowledged) {
+      return updateResult;
+    }
+  };
 
   private handleUserCredentials(
     isUsernameExists: boolean,

@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import User from '../database/mongodb/models/user.schema';
 import { IRegisterBody } from '../interfaces/auth.interface';
 
@@ -52,12 +53,41 @@ class UserRepo {
     return data;
   }
 
+  /**
+   * This Function will get the User Document Based on the Username
+   * @param username
+   * @returns
+   */
   public async getUserInfo(username: string) {
     const document = await User.findOne({
       username: username,
     });
-   
+
     return document;
+  }
+
+  public async getUserId(id: string | mongoose.Schema.Types.ObjectId) {
+    const document = await User.findOne({
+      _id: id as string | mongoose.Schema.Types.ObjectId,
+    });
+    return document;
+  }
+
+  public async updateUserInfo(
+    userId: string,
+    user: object
+  ): Promise<mongoose.UpdateWriteOpResult> {
+    const updateResult = await User.updateOne(
+      {
+        _id: userId as string,
+      },
+      { ...user },
+      {
+        $new: true,
+      }
+    );
+
+    return updateResult;
   }
 }
 

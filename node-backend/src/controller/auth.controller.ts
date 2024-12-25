@@ -4,8 +4,15 @@ import {
   loginSchema,
   registerSchema,
 } from '../validation/auth.validator';
-import { ILoginBody, IRegisterBody } from '../interfaces/auth.interface';
-import { ValidationException } from '../utility/exceptionUtility';
+import {
+  ILoginBody,
+  IRegisterBody,
+  IResetPassword,
+} from '../interfaces/auth.interface';
+import {
+  BadRequestException,
+  ValidationException,
+} from '../utility/exceptionUtility';
 import httpStatusCode from 'http-status-codes';
 import { checkObjectLength } from '../utility/instanceUtility';
 import { appLogger } from '../libs/logger';
@@ -121,6 +128,72 @@ class AuthController {
       next(err);
     }
   };
+
+  public checkResetPasswordLink = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const tokenParams = req.params.token;
+    if (!tokenParams) {
+      return genericErrorResponse(
+        res,
+        'tokenParams',
+        'The Token path parameter is required',
+        403
+      );
+    }
+    try {
+      const response = await this.AuthService.checkPasswordLinkService(
+        tokenParams
+      );
+      return genericSuccessResponse(
+        res,
+        response,
+        response
+          ? `The Provided Reset Password Link is valid`
+          : `The Provided Reset Password Link is invalid`,
+        httpStatusCode.ACCEPTED
+      );
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  public async resetPassword(req: Request, res: Response, next: NextFunction) {
+    const { error, value } = forgetBodySchema.validate(
+      req.body as IResetPassword
+    );
+    if (error) {
+      return genericErrorResponse(
+        res,
+        error.details,
+        'Validation Error',
+        httpStatusCode.BAD_REQUEST
+      );
+    }
+
+    const userId = req.params.userId;
+    if (!userId) {
+      throw new BadRequestException(403, `The User Id Path Parameter is Empty`);
+    }
+
+    try {
+      const validPayload = JSON.parse(JSON.stringify(value as IResetPassword));
+      const response = await this.AuthService.resetPasswordService(
+        validPayload as IResetPassword,
+        userId as string
+      );
+      return genericSuccessResponse(
+        res,
+        response,
+        'Password Reset Successfully',
+        httpStatusCode.ACCEPTED
+      );
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export default new AuthController();

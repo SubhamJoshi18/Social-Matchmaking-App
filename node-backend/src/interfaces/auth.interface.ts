@@ -19,4 +19,8 @@ interface IPayloadBody {
   isActive: boolean;
 }
 
-export { IRegisterBody, IPayloadBody, ILoginBody };
+interface IResetPassword {
+  password: string;
+}
+
+export { IRegisterBody, IPayloadBody, ILoginBody, IResetPassword };

@@ -36,7 +36,7 @@ class EmailHelper {
       mailOption as unknown as nodemailer.SendMailOptions
     );
 
-    appLogger.info(`Email Send`, response);
+    appLogger.info(`Email Send to the ${toEmail.trim()}`, response);
   }
 }
 
