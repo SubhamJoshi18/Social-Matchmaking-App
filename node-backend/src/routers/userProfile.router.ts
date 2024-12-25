@@ -1,11 +1,17 @@
 import { Request, Response, Router } from 'express';
 import { verifyAuthTokenMiddleware } from '../middleware/authMiddleware/verifyToken.middleware';
+import {
+  checkRoleExists,
+  isUser,
+} from '../middleware/authMiddleware/roles.middleware';
 
 const userProfileRouter: Router = Router();
 
 userProfileRouter.get(
   '/test',
   verifyAuthTokenMiddleware,
+  checkRoleExists,
+  isUser,
   (req: Request, res: Response): void => {
     console.log(req.user);
     res.status(201).json({
