@@ -15,21 +15,21 @@ class UuidTokenRepo {
     }
     const newResult = await UuuidToken.create({
       email: email,
-      uuid_token: uuidToken,
+      uuidToken: uuidToken,
     });
     return newResult;
   }
 
   public async retriveToken(uuidToken: string) {
     const token = await UuuidToken.findOne({
-      uuid_token: uuidToken as string,
+      uuidToken: uuidToken as string,
     });
     return token;
   }
 
   public async checkDuplicationUuidToken(uuidToken: string) {
     const isToken = await UuuidToken.findOne({
-      uuid_token: uuidToken,
+      uuidToken: uuidToken,
     });
 
     return !isToken || isToken === null ? true : false;
