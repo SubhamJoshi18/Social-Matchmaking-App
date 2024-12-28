@@ -3,12 +3,12 @@ import mongoose from 'mongoose';
 
 const uuidTokenSchema = new mongoose.Schema(
   {
-    uuid_token: {
-      type: string,
+    uuidToken: {
+      type: String,
       required: false,
     },
     email: {
-      type: string,
+      type: String,
       required: true,
     },
   },
@@ -19,17 +19,18 @@ const uuidTokenSchema = new mongoose.Schema(
 
 const tokenSchema = new mongoose.Schema(
   {
-    uuid_token: {
-      type: string,
+    uuidToken: {
+      type: String,
       required: false,
     },
 
-    block_list_access_token: {
-      type: string,
+    blockListAccessToken: {
+      type: String,
       required: false,
     },
-    block_list_refresh_token: {
-      type: string,
+
+    blockListRefreshToken: {
+      type: String,
       required: false,
     },
 

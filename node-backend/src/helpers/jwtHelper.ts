@@ -46,6 +46,24 @@ class JwtHelper {
   };
 
   /**
+   * This Function will check if the access token is valid or not
+   * @param authToken
+   */
+  public verifyAccessToken = async (authToken: string) => {
+    const secretKey =
+      this.envHelper?.getEnvValue('SECRET_KEY') ?? 'random_secret';
+
+    return new Promise((resolve, reject) => {
+      jwt.verify(authToken, secretKey, (err, decodedPayload) => {
+        if (!err) {
+          resolve(decodedPayload);
+        }
+        reject(err);
+      });
+    });
+  };
+
+  /**
    * Creates a refresh token with a given payload.
    * @param {IPayloadBody} payloadDetails - The payload details to include in the token.
    * @returns {Promise<string>} - A promise that resolves to the generated refresh token.

@@ -141,7 +141,7 @@ class AuthService {
       randomUuid
     );
 
-    const resetUrl = `http://localhost:3000/api/reset-password/${insertResult.uuid_token}/${userId}`;
+    const resetUrl = `http://localhost:3000/api/reset-password/${insertResult.uuidToken}/${userId}`;
     const subject = 'Password Reset Request';
     const text = `Click the following link to reset your password: ${resetUrl}`;
 
