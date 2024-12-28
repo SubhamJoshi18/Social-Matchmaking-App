@@ -7,4 +7,11 @@ const userProfileDemographics = joi.object({
   ethnicity: joi.string().required(),
 });
 
-export { userProfileDemographics };
+const updateUserProfileDemographics = joi.object({
+  age: joi.number().required(),
+  location: joi.string().required(),
+  gender: joi.string().required(),
+  ethnicity: joi.string().required(),
+});
+
+export { userProfileDemographics, updateUserProfileDemographics };

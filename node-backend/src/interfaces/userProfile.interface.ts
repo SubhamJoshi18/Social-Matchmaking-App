@@ -11,4 +11,11 @@ interface IUserProfileDemographics {
   ethnicity: string;
 }
 
-export { IUserProfileDemographics };
+interface IUserProfileUpdateDemograhpics {
+  age?: number;
+  location?: string;
+  gender?: Gender;
+  ethnicity?: string;
+}
+
+export { IUserProfileDemographics, IUserProfileUpdateDemograhpics };

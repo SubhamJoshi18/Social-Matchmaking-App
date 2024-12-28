@@ -32,4 +32,22 @@ userProfileRouter.post(
   UserProfileController.createUserDemographics
 );
 
+userProfileRouter.patch(
+  '/user/demographic',
+  verifyAuthTokenMiddleware,
+  checkRoleExists,
+  isUser,
+  isUserActivated,
+  UserProfileController.updateDemographic
+);
+
+userProfileRouter.get(
+  '/user/demographic',
+  verifyAuthTokenMiddleware,
+  checkRoleExists,
+  isUser,
+  isUserActivated,
+  UserProfileController.getUserDemographics
+);
+
 export default userProfileRouter;
