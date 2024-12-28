@@ -1,3 +1,5 @@
+import { boolean } from 'joi';
+
 /**
  * The Function will return the string if it is number
  * @param value
@@ -30,5 +32,11 @@ export const convertIntoNumber = (value: any) => {
 export const checkObjectLength = (valueObject: Object) => {
   return typeof valueObject === 'object'
     ? Object.entries(valueObject).length > 0
+    : false;
+};
+
+export const checkBothValueTrue = (value1: boolean, value2: boolean) => {
+  return typeof value1 === 'boolean' && typeof value2 === 'boolean'
+    ? value1 && value2
     : false;
 };

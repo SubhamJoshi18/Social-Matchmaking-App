@@ -5,7 +5,7 @@ import {
   isUser,
 } from '../middleware/authMiddleware/roles.middleware';
 import { isUserActivated } from '../middleware/authMiddleware/checkActive.middleware';
-import UserProfileController from '../controller/userProfile.controller';
+import UserProfileController from '../controller/userProfiles/demographic.controller';
 
 const userProfileRouter: Router = Router();
 

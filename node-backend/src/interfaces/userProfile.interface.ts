@@ -4,6 +4,19 @@ enum Gender {
   Other = 'Other',
 }
 
+enum RelationShipEnum {
+  Single = 'Single',
+  Married = 'Married',
+  Divorced = 'Divorced',
+  Other = 'Other',
+}
+
+enum ChildrenPreferencesEnum {
+  Yes = 'Yes',
+  No = 'No',
+  Maybe = 'Maybe',
+}
+
 interface IUserProfileDemographics {
   age: number;
   location: string;
@@ -18,4 +31,21 @@ interface IUserProfileUpdateDemograhpics {
   ethnicity?: string;
 }
 
-export { IUserProfileDemographics, IUserProfileUpdateDemograhpics };
+interface IUserPreferences {
+  relationshipPreferences: RelationShipEnum;
+  childrenPreferences: ChildrenPreferencesEnum;
+}
+
+interface IUserPreferencesUpdate {
+  relationshipPreferences?: RelationShipEnum;
+  childrenPreferences?: string;
+}
+
+export {
+  IUserProfileDemographics,
+  IUserProfileUpdateDemograhpics,
+  IUserPreferences,
+  IUserPreferencesUpdate,
+  RelationShipEnum,
+  ChildrenPreferencesEnum,
+};

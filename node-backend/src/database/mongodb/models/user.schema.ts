@@ -39,6 +39,11 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  userProfile: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'UserProfile',
+    required: false,
+  },
 });
 
 const User = mongoose.model('User', userSchema);

@@ -1,12 +1,11 @@
-import User from '../database/mongodb/models/user.schema';
 import {
   IUserProfileDemographics,
   IUserProfileUpdateDemograhpics,
-} from '../interfaces/userProfile.interface';
-import UserRepo from '../repository/user.repo';
-import UserProfileRepo from '../repository/userProfile.repo';
-import { DatabaseException } from '../utility/exceptionUtility';
-import { extractUserName, fetchUserId } from '../mappers/userProfile.mapper';
+} from '../../interfaces/userProfile.interface';
+import UserRepo from '../../repository/user.repo';
+import UserProfileRepo from '../../repository/userProfile.repo';
+import { DatabaseException } from '../../utility/exceptionUtility';
+import { extractUserName, fetchUserId } from '../../mappers/userProfile.mapper';
 
 class UserProfileService {
   private userProfileRepo: UserProfileRepo;
@@ -47,11 +46,11 @@ class UserProfileService {
     return savedResult;
   }
 
-  public async updateDemographicDetails(
+  public updateDemographicDetails = async (
     userId: string,
 
     validDemographics: IUserProfileUpdateDemograhpics
-  ) {
+  ) => {
     const getUser = await this.userRepo.getUserId(userId as string);
 
     if (!getUser) {
@@ -92,7 +91,7 @@ class UserProfileService {
       isAcknowleged,
       matchCount,
     };
-  }
+  };
 
   public async getUserDemographics(userId: string) {
     const isUser = await this.userRepo.getUserId(userId as string);

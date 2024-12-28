@@ -1,23 +1,23 @@
 import { NextFunction, Request, Response } from 'express';
-import UserProfileService from '../services/userProfile.service';
+import UserProfileService from '../../services/userProfiles/demographic.service';
 import {
   updateUserProfileDemographics,
   userProfileDemographics,
-} from '../validation/userProfil.validator';
+} from '../../validation/userProfile.validator';
 import {
   IUserProfileDemographics,
   IUserProfileUpdateDemograhpics,
-} from '../interfaces/userProfile.interface';
+} from '../../interfaces/userProfile.interface';
 import {
   genericErrorResponse,
   genericSuccessResponse,
-} from '../utility/responseUtility';
+} from '../../utility/responseUtility';
 import httpStatus from 'http-status-codes';
-import { checkObjectLength } from '../utility/instanceUtility';
-import { DatabaseException } from '../utility/exceptionUtility';
+import { checkObjectLength } from '../../utility/instanceUtility';
+import { DatabaseException } from '../../utility/exceptionUtility';
 
 class UserProfileController {
-  private userProfileService: UserProfileService;
+  public userProfileService: UserProfileService;
 
   constructor() {
     this.userProfileService = new UserProfileService();
@@ -78,18 +78,17 @@ class UserProfileController {
         httpStatus.ACCEPTED
       );
     } catch (err) {
-      console.log(err);
       next(err);
     }
   };
 
-  public async updateDemographic(
+  public updateDemographic = async (
     req: Request,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const { error, value } = updateUserProfileDemographics.validate(
-      req.body.demographic
+      req.body.demographics
     );
 
     if (error) {
@@ -112,7 +111,7 @@ class UserProfileController {
       );
     }
 
-    const userId = this.getUserId(req.user);
+    const userId = req.user._id;
     if (!userId) {
       throw new DatabaseException(
         null,
@@ -124,6 +123,7 @@ class UserProfileController {
       const validDemographic = JSON.parse(
         JSON.stringify(value as IUserProfileUpdateDemograhpics)
       );
+
       const resposne = await this.userProfileService.updateDemographicDetails(
         userId as string,
         validDemographic as IUserProfileUpdateDemograhpics
@@ -135,15 +135,25 @@ class UserProfileController {
         httpStatus.ACCEPTED
       );
     } catch (err) {
+      console.log(err);
+      if (err instanceof DatabaseException) {
+        return genericErrorResponse(
+          res,
+          err,
+          err.getMessage(),
+          err.getStatusCode()
+        );
+      }
+
       next(err);
     }
-  }
+  };
 
-  public async getUserDemographics(
+  public getUserDemographics = async (
     req: Request,
     res: Response,
     next: NextFunction
-  ) {
+  ) => {
     const userId = this.getUserId(req.user);
     if (!userId) {
       throw new DatabaseException(
@@ -164,7 +174,7 @@ class UserProfileController {
     } catch (err) {
       next(err);
     }
-  }
+  };
 }
 
 export default new UserProfileController();
