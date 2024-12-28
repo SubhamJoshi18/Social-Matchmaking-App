@@ -5,6 +5,7 @@ import {
   isUser,
 } from '../middleware/authMiddleware/roles.middleware';
 import { isUserActivated } from '../middleware/authMiddleware/checkActive.middleware';
+import UserProfileController from '../controller/userProfile.controller';
 
 const userProfileRouter: Router = Router();
 
@@ -20,6 +21,15 @@ userProfileRouter.get(
       message: 'Testing',
     });
   }
+);
+
+userProfileRouter.post(
+  '/user/demographic',
+  verifyAuthTokenMiddleware,
+  checkRoleExists,
+  isUser,
+  isUserActivated,
+  UserProfileController.createUserDemographics
 );
 
 export default userProfileRouter;
