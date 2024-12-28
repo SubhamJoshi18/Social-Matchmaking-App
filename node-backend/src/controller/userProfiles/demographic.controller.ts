@@ -15,14 +15,27 @@ import {
 import httpStatus from 'http-status-codes';
 import { checkObjectLength } from '../../utility/instanceUtility';
 import { DatabaseException } from '../../utility/exceptionUtility';
-
+/**
+ * @class UserProfileController
+ * @description Controller to handle user profile demographics operations, including creation, update, and retrieval of demographics data.
+ */
 class UserProfileController {
+  /**
+   * Instance of the UserProfileService to handle business logic related to user profiles.
+   * @type {UserProfileService}
+   */
   public userProfileService: UserProfileService;
 
   constructor() {
     this.userProfileService = new UserProfileService();
   }
 
+  /**
+   * Extracts the user ID from the user object.
+   * @private
+   * @param {object} user - User object from the request.
+   * @returns {any} The extracted user ID or null if not found.
+   */
   private getUserId(user: object): any {
     if (user.hasOwnProperty('_id')) {
       return (user as any)._id;
@@ -30,6 +43,15 @@ class UserProfileController {
     return null;
   }
 
+  /**
+   * Handles the creation of user demographic data.
+   * @public
+   * @async
+   * @param {Request} req - Express request object.
+   * @param {Response} res - Express response object.
+   * @param {NextFunction} next - Express next middleware function.
+   * @returns {Promise<void>}
+   */
   public createUserDemographics = async (
     req: Request,
     res: Response,
@@ -53,7 +75,7 @@ class UserProfileController {
     if (!isObjectValid) {
       throw new DatabaseException(
         httpStatus.CONFLICT,
-        'The Requested Object Demogrpahics is empty'
+        'The Requested Object Demographics is empty'
       );
     }
 
@@ -61,7 +83,7 @@ class UserProfileController {
     if (!userId) {
       throw new DatabaseException(
         null,
-        'The User Id is missing in the Header Payloads'
+        'The User ID is missing in the header payloads'
       );
     }
 
@@ -74,7 +96,7 @@ class UserProfileController {
       return genericSuccessResponse(
         res,
         response,
-        `The Demographic for ${userId} is  Created `,
+        `The Demographic for ${userId} is Created `,
         httpStatus.ACCEPTED
       );
     } catch (err) {
@@ -82,6 +104,15 @@ class UserProfileController {
     }
   };
 
+  /**
+   * Handles updating of user demographic data.
+   * @public
+   * @async
+   * @param {Request} req - Express request object.
+   * @param {Response} res - Express response object.
+   * @param {NextFunction} next - Express next middleware function.
+   * @returns {Promise<void>}
+   */
   public updateDemographic = async (
     req: Request,
     res: Response,
@@ -107,7 +138,7 @@ class UserProfileController {
     if (!isObjectValid) {
       throw new DatabaseException(
         httpStatus.CONFLICT,
-        'The Requested Object Demogrpahics is empty'
+        'The Requested Object Demographics is empty'
       );
     }
 
@@ -115,7 +146,7 @@ class UserProfileController {
     if (!userId) {
       throw new DatabaseException(
         null,
-        'The User Id is missing in the Header Payloads'
+        'The User ID is missing in the header payloads'
       );
     }
 
@@ -124,13 +155,13 @@ class UserProfileController {
         JSON.stringify(value as IUserProfileUpdateDemograhpics)
       );
 
-      const resposne = await this.userProfileService.updateDemographicDetails(
+      const response = await this.userProfileService.updateDemographicDetails(
         userId as string,
         validDemographic as IUserProfileUpdateDemograhpics
       );
       return genericSuccessResponse(
         res,
-        resposne,
+        response,
         `The Demographic for ${userId} is Updated `,
         httpStatus.ACCEPTED
       );
@@ -149,6 +180,15 @@ class UserProfileController {
     }
   };
 
+  /**
+   * Retrieves user demographic data.
+   * @public
+   * @async
+   * @param {Request} req - Express request object.
+   * @param {Response} res - Express response object.
+   * @param {NextFunction} next - Express next middleware function.
+   * @returns {Promise<void>}
+   */
   public getUserDemographics = async (
     req: Request,
     res: Response,
@@ -158,16 +198,16 @@ class UserProfileController {
     if (!userId) {
       throw new DatabaseException(
         null,
-        'The User Id is missing in the Header Payloads'
+        'The User ID is missing in the header payloads'
       );
     }
     try {
-      const resposne = await this.userProfileService.getUserDemographics(
+      const response = await this.userProfileService.getUserDemographics(
         userId as string
       );
       return genericSuccessResponse(
         res,
-        resposne,
+        response,
         `The Demographic for ${userId}`,
         httpStatus.ACCEPTED
       );

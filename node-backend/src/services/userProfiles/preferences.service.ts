@@ -21,10 +21,18 @@ class PreferencesService {
     this.userProfleRepo = new UserProfileRepo();
   }
 
+  /**
+   * Creates user preferences.
+   *
+   * @param {string} userId - The ID of the user.
+   * @param {IUserPreferences} validPreferences - The valid preferences to save.
+   * @throws {DatabaseException} - If the user does not exist or preferences are invalid.
+   * @returns {Promise<any>} - The saved preferences.
+   */
   public createPreferences = async (
     userId: string,
     validPreferences: IUserPreferences
-  ) => {
+  ): Promise<any> => {
     const { relationshipPreferences, childrenPreferences } = validPreferences;
     const getUser = await this.userRepo.getUserId(userId as string);
 
@@ -42,7 +50,7 @@ class PreferencesService {
     if (!isValid) {
       throw new DatabaseException(
         null,
-        `Children Type or Relation Type is invalid or does not exists `
+        `Children Type or Relation Type is invalid or does not exists`
       );
     }
 
@@ -54,23 +62,38 @@ class PreferencesService {
     return savedPreferences;
   };
 
+  /**
+   * Updates user preferences.
+   *
+   * @param {string} userId - The ID of the user.
+   * @param {IUserPreferencesUpdate} validPreferences - The updated preferences.
+   * @returns {Promise<any>} - The updated preferences or an error object.
+   */
   public updatePreferences = async (
     userId: string,
     validPreferences: IUserPreferencesUpdate
-  ) => {
+  ): Promise<any> => {
     const updatedPreferences = await this.userProfleRepo.updatePreferences(
       userId as string,
       validPreferences as IUserPreferencesUpdate
     );
+
     const isAcknowleged = updatedPreferences.acknowledged;
     const matchCount = updatedPreferences.matchedCount > 0;
     const isValidUpdated = checkBothValueTrue(isAcknowleged, matchCount);
+
     return isValidUpdated
       ? updatedPreferences
       : { isAcknowleged: false, matchCount: 0 };
   };
 
-  public getUserPreferences = async (userId: string) => {
+  /**
+   * Retrieves user preferences.
+   *
+   * @param {string} userId - The ID of the user.
+   * @returns {Promise<any>} - The user preferences or a default message if not set.
+   */
+  public getUserPreferences = async (userId: string): Promise<any> => {
     const userPreferences = await this.userProfleRepo.getUserPreferences(
       userId as string
     );

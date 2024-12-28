@@ -17,6 +17,10 @@ import UuidTokenRepo from '../repository/uuidToken.repo';
 import { createRandomizeUuid } from '../utility/uuidUtility';
 import EmailHelper from '../helpers/smtpHelper';
 
+/**
+ * Service class responsible for handling authentication-related business logic,
+ * including user registration, login, password reset, and validation of authentication tokens.
+ */
 class AuthService {
   private UserRepo: UserRepo;
   private UuidTokenRepo: UuidTokenRepo;
@@ -31,10 +35,12 @@ class AuthService {
     this.UuidTokenRepo = new UuidTokenRepo();
     this.smtpHelper = new EmailHelper();
   }
+
   /**
-   *
-   * This Function have the business logic to register the valid User
-   * @param validBody
+   * Registers a new user if the provided credentials (email and username) are valid and not already taken.
+   * @param validBody - The user registration data, including email, username, and password.
+   * @returns A promise resolving to the result of the user registration operation.
+   * @throws {DatabaseException} If the email or username already exists.
    */
   public async registerService(
     validBody: Required<IRegisterBody>
@@ -43,7 +49,6 @@ class AuthService {
     console.log(validBody);
 
     const isEmalExists = await this.UserRepo?.checkEmailExists(email);
-
     const isUsernameExists = await this.UserRepo?.checkUserNameExists(username);
 
     if (isEmalExists || isUsernameExists) {
@@ -53,7 +58,6 @@ class AuthService {
       );
 
       const { error } = isError;
-
       if (error) {
         throw new DatabaseException(httpStatus.CONFLICT, error);
       }
@@ -74,6 +78,12 @@ class AuthService {
     return insertResult;
   }
 
+  /**
+   * Authenticates a user based on their username and password and returns authentication tokens.
+   * @param payload - The login credentials, including username and password.
+   * @returns A promise resolving to an object containing the user payload and authentication tokens (access token and refresh token).
+   * @throws {DatabaseException} If the username does not exist or the password is incorrect.
+   */
   public async loginService(payload: ILoginBody) {
     const { password, username } = payload;
 
@@ -85,8 +95,8 @@ class AuthService {
         'Username or Email Does not match you provided , Please try a valid Username'
       );
     }
-    const hashPassword = userDocument.password;
 
+    const hashPassword = userDocument.password;
     const isPasswordMatch = await this.bcryptHelper.compareHash(
       password,
       hashPassword
@@ -117,6 +127,12 @@ class AuthService {
     };
   }
 
+  /**
+   * Initiates a password reset process by sending a reset link to the user's email.
+   * @param email - The email address associated with the user requesting a password reset.
+   * @returns A promise resolving to a success message indicating the email was sent.
+   * @throws {DatabaseException} If the email does not exist or if there is an error sending the email.
+   */
   public async forgetService(email: string) {
     const isValidEmail = await this.UserRepo.checkEmailExists(email);
     if (!isValidEmail) {
@@ -156,6 +172,12 @@ class AuthService {
     }
   }
 
+  /**
+   * Validates the password reset token provided in the URL.
+   * @param uuidToken - The UUID token from the password reset link.
+   * @returns A promise resolving to the token data if valid, or a BadRequestException if invalid.
+   * @throws {DatabaseException} If the token is invalid or duplicated.
+   */
   public async checkPasswordLinkService(uuidToken: string) {
     let isTokenValid = true;
 
@@ -185,6 +207,13 @@ class AuthService {
     }
   }
 
+  /**
+   * Resets the user's password using the new password provided.
+   * @param validPassword - The new password to set for the user.
+   * @param id - The user ID of the account whose password is being reset.
+   * @returns A promise resolving to the result of the password update operation.
+   * @throws {DatabaseException} If the user does not exist or if the new password matches the old password.
+   */
   public resetPasswordService = async (
     validPassword: IResetPassword,
     id: string
@@ -228,6 +257,12 @@ class AuthService {
     }
   };
 
+  /**
+   * Handles the validation of user credentials during registration, checking if either the username or email is already taken.
+   * @param isUsernameExists - Whether the username already exists.
+   * @param isEmalExists - Whether the email already exists.
+   * @returns An object containing an error message if the credentials are invalid, or null if valid.
+   */
   private handleUserCredentials(
     isUsernameExists: boolean,
     isEmalExists: boolean
@@ -235,23 +270,23 @@ class AuthService {
     const bothValid = isUsernameExists && isEmalExists;
 
     return bothValid
-      ? {
-          error: null,
-        }
+      ? { error: null }
       : {
           error: `Username or Email already Exists , Please Try again a new credentials`,
         };
   }
 
+  /**
+   * Creates an access token and a refresh token for the authenticated user.
+   * @param userPayload - The payload containing user details for the token.
+   * @returns A promise resolving to an object containing the generated access token and refresh token.
+   */
   private createAccessTokenAndRefreshToken = async (
     userPayload: IPayloadBody
   ) => {
     const accessToken = await this.jwtHelepr.createAccessToken(userPayload);
     const refreshToken = await this.jwtHelepr.createRefreshToken(userPayload);
-    return {
-      accessToken,
-      refreshToken,
-    };
+    return { accessToken, refreshToken };
   };
 }
 

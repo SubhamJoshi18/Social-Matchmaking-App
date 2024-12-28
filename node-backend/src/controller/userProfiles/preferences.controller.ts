@@ -18,10 +18,18 @@ import {
 class PreferencesController {
   private preferencesService: PreferencesService;
 
+  /**
+   * Initializes a new instance of the PreferencesController class.
+   */
   constructor() {
     this.preferencesService = new PreferencesService();
   }
 
+  /**
+   * Extracts the user ID from the given user object.
+   * @param {object} user - The user object from the request.
+   * @returns {string | null} The user ID if found, otherwise `null`.
+   */
   private getUserId(user: object): any {
     if (user.hasOwnProperty('_id')) {
       return (user as any)._id;
@@ -29,6 +37,13 @@ class PreferencesController {
     return null;
   }
 
+  /**
+   * Creates user preferences.
+   * @param {Request} req - The HTTP request object containing user preferences in the body.
+   * @param {Response} res - The HTTP response object.
+   * @param {NextFunction} next - The next middleware function.
+   * @returns {Promise<void>} Sends a success or error response based on the operation.
+   */
   public createPreferences = async (
     req: Request,
     res: Response,
@@ -78,6 +93,13 @@ class PreferencesController {
     }
   };
 
+  /**
+   * Updates user preferences.
+   * @param {Request} req - The HTTP request object containing updated preferences in the body.
+   * @param {Response} res - The HTTP response object.
+   * @param {NextFunction} next - The next middleware function.
+   * @returns {Promise<void>} Sends a success or error response based on the operation.
+   */
   public updatePreferences = async (
     req: Request,
     res: Response,
@@ -120,7 +142,7 @@ class PreferencesController {
       return genericSuccessResponse(
         res,
         response,
-        `Prefrences Updated Successfully`,
+        `Preferences Updated Successfully`,
         httpStatus.ACCEPTED
       );
     } catch (err) {
@@ -128,6 +150,13 @@ class PreferencesController {
     }
   };
 
+  /**
+   * Retrieves user preferences.
+   * @param {Request} req - The HTTP request object.
+   * @param {Response} res - The HTTP response object.
+   * @param {NextFunction} next - The next middleware function.
+   * @returns {Promise<void>} Sends the user's preferences in the response.
+   */
   public getUserPreferences = async (
     req: Request,
     res: Response,

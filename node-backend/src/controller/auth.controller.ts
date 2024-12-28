@@ -21,13 +21,26 @@ import {
   genericErrorResponse,
   genericSuccessResponse,
 } from '../utility/responseUtility';
-
+/**
+ * Controller for handling authentication-related endpoints.
+ */
 class AuthController {
+  /**
+   * Instance of AuthService for handling business logic.
+   * @private
+   */
   private AuthService: AuthService = new AuthService();
 
   constructor() {
     this.AuthService = new AuthService();
   }
+
+  /**
+   * Handles user registration.
+   * @param req - Express request object containing the user registration data.
+   * @param res - Express response object.
+   * @param next - Express next function for error handling.
+   */
   public registerController = async (
     req: Request,
     res: Response,
@@ -39,7 +52,7 @@ class AuthController {
       return genericErrorResponse(
         res,
         error.details,
-        'Validation Error ',
+        'Validation Error',
         httpStatusCode.BAD_REQUEST
       );
     }
@@ -51,14 +64,14 @@ class AuthController {
         `Status : ${checkValidObject} The Request Body provided by user is valid and clean.`
       );
     }
+
     try {
       const validBody = JSON.parse(JSON.stringify(value));
-
       const response = await this.AuthService.registerService(validBody);
       return genericSuccessResponse(
         res,
         response,
-        'User Registered SuccesssFully',
+        'User Registered Successfully',
         httpStatusCode.ACCEPTED
       );
     } catch (err) {
@@ -66,6 +79,12 @@ class AuthController {
     }
   };
 
+  /**
+   * Handles user login.
+   * @param req - Express request object containing user login credentials.
+   * @param res - Express response object.
+   * @param next - Express next function for error handling.
+   */
   public loginUser = async (
     req: Request,
     res: Response,
@@ -76,7 +95,7 @@ class AuthController {
       return genericErrorResponse(
         res,
         error.details,
-        'Validation Error ',
+        'Validation Error',
         httpStatusCode.BAD_REQUEST
       );
     }
@@ -90,14 +109,20 @@ class AuthController {
     }
 
     try {
-      const validPayload = JSON.parse(JSON.stringify(value as ILoginBody));
+      const validPayload = JSON.parse(JSON.stringify(value));
       const response = await this.AuthService.loginService(validPayload);
-      return genericSuccessResponse(res, response, 'Login SuccesssFully', 201);
+      return genericSuccessResponse(res, response, 'Login Successfully', 201);
     } catch (err) {
       next(err);
     }
   };
 
+  /**
+   * Handles forgot password requests by sending a password reset link.
+   * @param req - Express request object containing the user's email.
+   * @param res - Express response object.
+   * @param next - Express next function for error handling.
+   */
   public forgetPassword = async (
     req: Request,
     res: Response,
@@ -121,7 +146,7 @@ class AuthController {
       return genericSuccessResponse(
         res,
         response,
-        'Passoword Reset Link Forwarded',
+        'Password Reset Link Forwarded',
         201
       );
     } catch (err) {
@@ -129,6 +154,12 @@ class AuthController {
     }
   };
 
+  /**
+   * Verifies the validity of a reset password link.
+   * @param req - Express request object containing the token parameter.
+   * @param res - Express response object.
+   * @param next - Express next function for error handling.
+   */
   public checkResetPasswordLink = async (
     req: Request,
     res: Response,
@@ -151,8 +182,8 @@ class AuthController {
         res,
         response,
         response
-          ? `The Provided Reset Password Link is valid`
-          : `The Provided Reset Password Link is invalid`,
+          ? 'The Provided Reset Password Link is valid'
+          : 'The Provided Reset Password Link is invalid',
         httpStatusCode.ACCEPTED
       );
     } catch (err) {
@@ -160,6 +191,12 @@ class AuthController {
     }
   };
 
+  /**
+   * Resets the user's password.
+   * @param req - Express request object containing the user ID and new password data.
+   * @param res - Express response object.
+   * @param next - Express next function for error handling.
+   */
   public async resetPassword(req: Request, res: Response, next: NextFunction) {
     const { error, value } = forgetBodySchema.validate(
       req.body as IResetPassword
@@ -179,10 +216,10 @@ class AuthController {
     }
 
     try {
-      const validPayload = JSON.parse(JSON.stringify(value as IResetPassword));
+      const validPayload = JSON.parse(JSON.stringify(value));
       const response = await this.AuthService.resetPasswordService(
-        validPayload as IResetPassword,
-        userId as string
+        validPayload,
+        userId
       );
       return genericSuccessResponse(
         res,

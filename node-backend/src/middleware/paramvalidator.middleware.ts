@@ -16,6 +16,7 @@ export const validateParams = (
       'Params is not valid',
       httpStatus.BAD_REQUEST
     );
+  } else {
     next();
   }
 };
