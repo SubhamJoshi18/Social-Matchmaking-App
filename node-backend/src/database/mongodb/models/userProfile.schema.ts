@@ -42,9 +42,9 @@ const InterestsSchema = new mongoose.Schema(
 
 const ViewsSchema = new mongoose.Schema(
   {
-    politicalViews: { type: String, required: false },
-    likes: [{ type: String, required: false }],
-    dislikes: [{ type: String, required: false }],
+    politicalViews: { type: String, required: false, default: '' },
+    likes: [{ type: String, required: false, default: '' }],
+    dislikes: [{ type: String, required: false, default: '' }],
   },
   { _id: false }
 );

@@ -1,6 +1,7 @@
 import User from '../database/mongodb/models/user.schema';
 import UserProfile from '../database/mongodb/models/userProfile.schema';
 import {
+  IUserInterest,
   IUserPreferences,
   IUserPreferencesUpdate,
   IUserProfileDemographics,
@@ -96,6 +97,48 @@ class UserProfileRepo {
     );
 
     return userPreferences;
+  }
+
+  public async createUserInterest(
+    validInterest: IUserInterest,
+    userId: string
+  ) {
+    return await UserProfile.updateOne(
+      {
+        user: userId,
+      },
+      {
+        interests: {
+          ...validInterest,
+        },
+      },
+      {
+        $new: true,
+      }
+    );
+  }
+
+  public async clearUserInterest(userId: string) {
+    return await UserProfile.updateOne(
+      {
+        user: userId,
+      },
+      {
+        interests: {
+          hobbies: [],
+          guiltyPleasures: [],
+          otherInterests: [],
+        },
+      },
+      {
+        $new: true,
+      }
+    );
+  }
+  public async getUserInterest(userId: string) {
+    return await UserProfile.findOne({
+      user: userId,
+    }).select('interest');
   }
 }
 

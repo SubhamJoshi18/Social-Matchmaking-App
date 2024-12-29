@@ -1,7 +1,8 @@
 import Joi from 'joi';
 
-
-const genderEnum = Joi.string().valid('male', 'female', 'non-binary', 'other').required();
+const genderEnum = Joi.string()
+  .valid('male', 'female', 'non-binary', 'other')
+  .required();
 
 const userProfileDemographics = Joi.object({
   age: Joi.number().min(18).max(120).required().messages({
@@ -28,7 +29,6 @@ const userProfileDemographics = Joi.object({
   }),
 });
 
-
 const updateUserProfileDemographics = Joi.object({
   age: Joi.number().min(18).max(120).optional(),
   location: Joi.string().min(2).max(100).optional(),
@@ -36,24 +36,40 @@ const updateUserProfileDemographics = Joi.object({
   ethnicity: Joi.string().min(3).max(100).optional(),
 });
 
-
 const userPreferences = Joi.object({
-  relationshipPreferences: Joi.string().valid('single', 'in a relationship', 'married').required().messages({
-    'string.base': 'Relationship preferences must be a string.',
-    'any.required': 'Relationship preferences are required.',
-    'any.only': 'Relationship preferences must be one of: single, in a relationship, married.',
-  }),
-  childrenPreferences: Joi.string().valid('wants children', 'does not want children', 'unsure').required().messages({
-    'string.base': 'Children preferences must be a string.',
-    'any.required': 'Children preferences are required.',
-    'any.only': 'Children preferences must be one of: wants children, does not want children, unsure.',
-  }),
+  relationshipPreferences: Joi.string()
+    .valid('single', 'in a relationship', 'married')
+    .required()
+    .messages({
+      'string.base': 'Relationship preferences must be a string.',
+      'any.required': 'Relationship preferences are required.',
+      'any.only':
+        'Relationship preferences must be one of: single, in a relationship, married.',
+    }),
+  childrenPreferences: Joi.string()
+    .valid('wants children', 'does not want children', 'unsure')
+    .required()
+    .messages({
+      'string.base': 'Children preferences must be a string.',
+      'any.required': 'Children preferences are required.',
+      'any.only':
+        'Children preferences must be one of: wants children, does not want children, unsure.',
+    }),
 });
 
-
 const userUpdatePreferences = Joi.object({
-  relationshipPreferences: Joi.string().valid('single', 'in a relationship', 'married').optional(),
-  childrenPreferences: Joi.string().valid('wants children', 'does not want children', 'unsure').optional(),
+  relationshipPreferences: Joi.string()
+    .valid('single', 'in a relationship', 'married')
+    .optional(),
+  childrenPreferences: Joi.string()
+    .valid('wants children', 'does not want children', 'unsure')
+    .optional(),
+});
+
+const userInterest = Joi.object({
+  hobbies: Joi.array().optional(),
+  guiltyPleasures: Joi.array().optional(),
+  otherInterests: Joi.array().optional(),
 });
 
 export {
@@ -61,4 +77,5 @@ export {
   updateUserProfileDemographics,
   userPreferences,
   userUpdatePreferences,
+  userInterest,
 };

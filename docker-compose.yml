@@ -1,6 +1,27 @@
 version: '3.8'
 services:
-  app:
+
+
+  flask-app:
+    build:
+      context: ./flask-backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./flask-backend/.env
+    depends_on:
+      - mongo
+    
+  model-service:
+      build:
+        context: ./model-service
+        dockerfile: Dockerfile
+      depends_on:
+        - flask-app
+        - mongo
+
+  node-app:
     build:
       context: ./node-backend
       dockerfile: Dockerfile

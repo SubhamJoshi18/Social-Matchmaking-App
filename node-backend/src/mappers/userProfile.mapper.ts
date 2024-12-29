@@ -43,3 +43,7 @@ export const fetchUserId = (user: any) => {
   }
   return null;
 };
+
+export const checkIsArray = (value: string[] | any[]) => {
+  return typeof value === 'object' && Array.isArray(value);
+};

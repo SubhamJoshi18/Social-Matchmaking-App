@@ -41,6 +41,18 @@ interface IUserPreferencesUpdate {
   childrenPreferences?: string;
 }
 
+interface IUserInterest {
+  hobbies?: string[];
+  guiltyPleasures?: string[];
+  otherInterests?: string[];
+}
+
+interface IUserView {
+  politicalViews: string;
+  likes: string[];
+  dislikes: string[];
+}
+
 export {
   IUserProfileDemographics,
   IUserProfileUpdateDemograhpics,
@@ -48,4 +60,6 @@ export {
   IUserPreferencesUpdate,
   RelationShipEnum,
   ChildrenPreferencesEnum,
+  IUserInterest,
+  IUserView,
 };
