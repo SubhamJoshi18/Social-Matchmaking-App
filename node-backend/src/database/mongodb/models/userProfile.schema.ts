@@ -40,22 +40,12 @@ const InterestsSchema = new mongoose.Schema(
   { _id: false }
 );
 
-const ViewsSchema = new mongoose.Schema(
-  {
-    politicalViews: { type: String, required: false, default: '' },
-    likes: [{ type: String, required: false, default: '' }],
-    dislikes: [{ type: String, required: false, default: '' }],
-  },
-  { _id: false }
-);
-
 const UserProfileSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     demographics: DemographicsSchema,
     preferences: PreferencesSchema,
     interests: InterestsSchema,
-    views: ViewsSchema,
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
