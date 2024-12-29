@@ -3,6 +3,12 @@ import { param, validationResult } from 'express-validator';
 import authController from '../controller/auth.controller';
 import { validateParams } from '../middleware/paramvalidator.middleware';
 import ratelimiter from '../middleware/rateLimit.middleware';
+import { verifyAuthTokenMiddleware } from '../middleware/authMiddleware/verifyToken.middleware';
+import {
+  checkRoleExists,
+  isUser,
+} from '../middleware/authMiddleware/roles.middleware';
+import { isUserActivated } from '../middleware/authMiddleware/checkActive.middleware';
 
 const authRouter: Router = Router();
 
@@ -27,4 +33,16 @@ authRouter.post(
   validateParams as any,
   authController.resetPassword
 );
+
+authRouter.get(
+  '/verify-password',
+  verifyAuthTokenMiddleware,
+  checkRoleExists,
+  isUser,
+  isUserActivated,
+  authController.verifyPassword
+);
+
+
+
 export default authRouter;

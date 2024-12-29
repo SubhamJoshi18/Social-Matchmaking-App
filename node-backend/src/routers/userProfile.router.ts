@@ -6,6 +6,8 @@ import {
 } from '../middleware/authMiddleware/roles.middleware';
 import { isUserActivated } from '../middleware/authMiddleware/checkActive.middleware';
 import UserProfileController from '../controller/userProfiles/demographic.controller';
+import InterestController from '../controller/userProfiles/interest.controller';
+import PreferencesController from '../controller/userProfiles/preferences.controller';
 
 const userProfileRouter: Router = Router();
 
@@ -48,6 +50,60 @@ userProfileRouter.get(
   isUser,
   isUserActivated,
   UserProfileController.getUserDemographics
+);
+
+userProfileRouter.post(
+  '/user/prefrences',
+  verifyAuthTokenMiddleware,
+  checkRoleExists,
+  isUser,
+  isUserActivated,
+  PreferencesController.createPreferences
+);
+
+userProfileRouter.patch(
+  '/user/prefrences',
+  verifyAuthTokenMiddleware,
+  checkRoleExists,
+  isUser,
+  isUserActivated,
+  PreferencesController.updatePreferences
+);
+
+userProfileRouter.get(
+  '/user/prefrences',
+  verifyAuthTokenMiddleware,
+  checkRoleExists,
+  isUser,
+  isUserActivated,
+  PreferencesController.getUserPreferences
+);
+
+userProfileRouter.post(
+  '/user/interests',
+  verifyAuthTokenMiddleware,
+  checkRoleExists,
+  isUser,
+  isUserActivated,
+  InterestController.createInterest
+);
+
+userProfileRouter.delete(
+  '/user/interests',
+  verifyAuthTokenMiddleware,
+  checkRoleExists,
+  isUser,
+  isUserActivated,
+  InterestController.deleteUserPreferences
+);
+
+userProfileRouter.get(
+  '/user/interests',
+  verifyAuthTokenMiddleware,
+  checkRoleExists,
+  isUser,
+  isUserActivated,
+  InterestController.getUserPreferences
 );
 
 export default userProfileRouter;

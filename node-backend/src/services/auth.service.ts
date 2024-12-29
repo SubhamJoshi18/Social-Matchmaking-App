@@ -8,6 +8,7 @@ import UserRepo from '../repository/user.repo';
 import {
   BadRequestException,
   DatabaseException,
+  ValidationException,
 } from '../utility/exceptionUtility';
 import httpStatus from 'http-status-codes';
 import BcryptHelper from '../helpers/bcryptHelper';
@@ -255,6 +256,32 @@ class AuthService {
     if (updateResult.modifiedCount > 0 && updateResult.acknowledged) {
       return updateResult;
     }
+  };
+
+  public verifyPassword = async (
+    validPasswordBody: { password: string },
+    userId: string
+  ) => {
+    const user = await this.UserRepo.getUserId(userId as string);
+
+    if (!user || typeof user === null) {
+      throw new ValidationException(null, `The User Document is Empty`);
+    }
+
+    const userPassword = user.password;
+    const isPasswordMatch = await this.bcryptHelper.compareHash(
+      validPasswordBody.password,
+      userPassword
+    );
+
+    if (!isPasswordMatch) {
+      throw new DatabaseException(
+        403,
+        `The Password you have provided Does not match, Please Try again`
+      );
+    }
+
+    return typeof isPasswordMatch === 'boolean' && isPasswordMatch;
   };
 
   /**

@@ -3,6 +3,7 @@ import {
   forgetBodySchema,
   loginSchema,
   registerSchema,
+  verifyPasswordSchema,
 } from '../validation/auth.validator';
 import {
   ILoginBody,
@@ -11,6 +12,7 @@ import {
 } from '../interfaces/auth.interface';
 import {
   BadRequestException,
+  DatabaseException,
   ValidationException,
 } from '../utility/exceptionUtility';
 import httpStatusCode from 'http-status-codes';
@@ -21,6 +23,8 @@ import {
   genericErrorResponse,
   genericSuccessResponse,
 } from '../utility/responseUtility';
+import Joi, { string } from 'joi';
+import { fetchUserId } from '../mappers/userProfile.mapper';
 /**
  * Controller for handling authentication-related endpoints.
  */
@@ -231,6 +235,39 @@ class AuthController {
       next(err);
     }
   }
+
+  public verifyPassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { error, value } = verifyPasswordSchema.validate(req.body);
+    if (error) {
+      throw new DatabaseException(
+        null,
+        `The Requested Body Does not Match with the Validation Format`
+      );
+    }
+    const userId = fetchUserId(req.user);
+
+    try {
+      const validPasswordBody = JSON.parse(
+        JSON.stringify(value as { password: string })
+      );
+      const response = await this.AuthService.verifyPassword(
+        validPasswordBody,
+        userId
+      );
+      return genericSuccessResponse(
+        res,
+        response,
+        `Password is Verified`,
+        httpStatusCode.ACCEPTED
+      );
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export default new AuthController();

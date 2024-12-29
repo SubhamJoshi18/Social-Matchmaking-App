@@ -1,6 +1,5 @@
 import Joi from 'joi';
 
-
 const registerSchema = Joi.object({
   email: Joi.string().email().required().messages({
     'string.base': 'Email must be a string.',
@@ -20,7 +19,6 @@ const registerSchema = Joi.object({
   }),
 });
 
-
 const loginSchema = Joi.object({
   username: Joi.string().optional().messages({
     'string.base': 'Username must be a string.',
@@ -36,6 +34,13 @@ const loginSchema = Joi.object({
   }),
 });
 
+const verifyPasswordSchema = Joi.object({
+  password: Joi.string().min(8).required().messages({
+    'string.base': 'Password must be a string.',
+    'string.min': 'Password must be at least 8 characters long.',
+    'any.required': 'Password is required.',
+  }),
+});
 
 const forgetBodySchema = Joi.object({
   email: Joi.string().email().required().messages({
@@ -45,7 +50,6 @@ const forgetBodySchema = Joi.object({
   }),
 });
 
-
 const resetBodySchema = Joi.object({
   password: Joi.string().min(8).required().messages({
     'string.base': 'Password must be a string.',
@@ -54,4 +58,10 @@ const resetBodySchema = Joi.object({
   }),
 });
 
-export { registerSchema, loginSchema, forgetBodySchema, resetBodySchema };
+export {
+  registerSchema,
+  loginSchema,
+  forgetBodySchema,
+  resetBodySchema,
+  verifyPasswordSchema,
+};
