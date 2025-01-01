@@ -39,6 +39,15 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+
+  blogs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Blog',
+      required: false,
+    },
+  ],
+
   userProfile: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'UserProfile',

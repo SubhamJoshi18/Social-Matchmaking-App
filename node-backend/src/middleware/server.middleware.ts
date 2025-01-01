@@ -13,6 +13,7 @@ export const serverMiddleware = (expressApplication: Application) => {
   expressApplication.use(express.json());
   expressApplication.use(express.urlencoded({ extended: true }));
   expressApplication.use(cors(corsConfig as CorsOptions));
+  expressApplication.use(morgan('dev'));
 };
 
 export default serverMiddleware;

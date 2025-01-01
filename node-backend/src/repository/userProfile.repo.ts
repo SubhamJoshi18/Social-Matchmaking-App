@@ -45,9 +45,9 @@ class UserProfileRepo {
 
   public async getUserDemographics(userId: string) {
     const userDemographics = await User.findOne({ _id: userId }).populate(
-      'UserProfile',
-      'demographics'
+      'UserProfile'
     );
+    console.log(userDemographics);
 
     return userDemographics;
   }

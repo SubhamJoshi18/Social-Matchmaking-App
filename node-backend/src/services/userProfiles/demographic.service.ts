@@ -7,7 +7,6 @@ import UserProfileRepo from '../../repository/userProfile.repo';
 import { DatabaseException } from '../../utility/exceptionUtility';
 import { extractUserName, fetchUserId } from '../../mappers/userProfile.mapper';
 
-
 class UserProfileService {
   private userProfileRepo: UserProfileRepo;
   private userRepo: UserRepo;
@@ -19,7 +18,7 @@ class UserProfileService {
 
   /**
    * Creates demographic details for a user.
-   * 
+   *
    * @param {string} userId - The ID of the user.
    * @param {IUserProfileDemographics} validDemographics - Valid demographics data to be saved.
    * @throws {DatabaseException} - If the user is not found or the ID does not match the stored document.
@@ -57,7 +56,7 @@ class UserProfileService {
 
   /**
    * Updates demographic details for a user.
-   * 
+   *
    * @param {string} userId - The ID of the user.
    * @param {IUserProfileUpdateDemograhpics} validDemographics - Valid demographics data to update.
    * @throws {DatabaseException} - If the user is not found, or the update fails.
@@ -111,7 +110,7 @@ class UserProfileService {
 
   /**
    * Retrieves the demographic details of a user.
-   * 
+   *
    * @param {string} userId - The ID of the user.
    * @throws {DatabaseException} - If the user is not found in the system.
    * @returns {Promise<any>} - The demographic details of the user.

@@ -40,3 +40,14 @@ export const checkBothValueTrue = (value1: boolean, value2: boolean) => {
     ? value1 && value2
     : false;
 };
+
+export const checkIfArrayisEmptyOrNot = (value: any[]) => {
+  return Array.isArray(value) && value.length > 0;
+};
+
+export const isValidStatus = (statusEnum: string[], statusParams: string) => {
+  return (
+    Array.isArray(statusEnum) &&
+    statusEnum.some((state: string) => state === statusParams)
+  );
+};
