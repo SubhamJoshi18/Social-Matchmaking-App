@@ -1,3 +1,5 @@
+import { boolean } from 'joi';
+
 /**
  * The Function will return the string if it is number
  * @param value
@@ -20,4 +22,32 @@ export const convertIntoNumber = (value: any) => {
     return value;
   }
   return Number(value);
+};
+
+/**
+ * This Function is used to check whether the object is valid or not
+ * @param valueObject
+ * @returns {boolean}
+ */
+export const checkObjectLength = (valueObject: Object) => {
+  return typeof valueObject === 'object'
+    ? Object.entries(valueObject).length > 0
+    : false;
+};
+
+export const checkBothValueTrue = (value1: boolean, value2: boolean) => {
+  return typeof value1 === 'boolean' && typeof value2 === 'boolean'
+    ? value1 && value2
+    : false;
+};
+
+export const checkIfArrayisEmptyOrNot = (value: any[]) => {
+  return Array.isArray(value) && value.length > 0;
+};
+
+export const isValidStatus = (statusEnum: string[], statusParams: string) => {
+  return (
+    Array.isArray(statusEnum) &&
+    statusEnum.some((state: string) => state === statusParams)
+  );
 };
