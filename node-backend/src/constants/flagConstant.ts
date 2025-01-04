@@ -1,3 +1,3 @@
-const isDockerEnabled = false;
+const isDockerEnabled = true;
 
 export { isDockerEnabled };
