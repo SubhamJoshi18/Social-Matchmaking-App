@@ -1,0 +1,4 @@
+flask
+flask_smorest
+flask_cors
+marshmallow

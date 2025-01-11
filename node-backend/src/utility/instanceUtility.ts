@@ -21,3 +21,14 @@ export const convertIntoNumber = (value: any) => {
   }
   return Number(value);
 };
+
+/**
+ * This Function is used to check whether the object is valid or not
+ * @param valueObject
+ * @returns {boolean}
+ */
+export const checkObjectLength = (valueObject: Object) => {
+  return typeof valueObject === 'object'
+    ? Object.entries(valueObject).length > 0
+    : false;
+};
